@@ -4,65 +4,30 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/solid';
 import { useState } from 'react';
-import {
-  MessageFormProps,
-  ChatObject,
-  MessageObject,
-} from 'react-chat-engine-advanced';
 import Dropzone from 'react-dropzone';
 
 interface Props {
-  messageProps: MessageFormProps;
-  activeChat: ChatObject | undefined;
+  message: string;
+  setAttachment: React.Dispatch<any>;
+  handleSubmitMessage: () => Promise<void>;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export function StandardMessageForm({ messageProps, activeChat }: Props) {
-  const [message, setMessage] = useState('');
-  const [attachment, setAttachment] = useState<any>('');
+export function MessageFormUI({
+  message,
+  setAttachment,
+  handleSubmitMessage,
+  handleInputChange,
+}: Props) {
   const [preview, setPreview] = useState('');
+
+  const submitMessage = () => {
+    setPreview('');
+    handleSubmitMessage();
+  };
 
   const handleClearImage = () => {
     setPreview('');
-    setAttachment('');
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMessage(e.target.value);
-  };
-
-  const handleSubmitMessage = async () => {
-    setPreview('');
-
-    const date = new Date()
-      .toISOString()
-      .replace('T', ' ')
-      .replace('Z', `${Math.floor(Math.random() * 100)}+00:00`);
-
-    const at = attachment
-      ? [
-          {
-            id: Math.floor(Math.random() * 100),
-            created: new Date().toISOString(),
-            blob: attachment,
-            file: attachment.name,
-          },
-        ]
-      : [];
-
-    const form = {
-      attachments: at,
-      created: date,
-      sender_username: messageProps.username ?? '',
-      text: message,
-      activeChatId: activeChat?.id ?? '',
-      custom_json: '',
-    };
-
-    const payload = form as MessageObject;
-
-    messageProps.onSubmit && messageProps.onSubmit(payload);
-
-    setMessage('');
     setAttachment('');
   };
 
@@ -114,7 +79,7 @@ export function StandardMessageForm({ messageProps, activeChat }: Props) {
           <hr className="vertical-line" />
           <PaperAirplaneIcon
             className="message-form-icon-airplane"
-            onClick={handleSubmitMessage}
+            onClick={submitMessage}
           />
         </div>
       </div>

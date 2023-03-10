@@ -1,0 +1,7 @@
+POST  http://localhost:1337/openai/text
+Content-Type: application/json
+
+{
+"text": "Limpar a casa dsad",
+"activeChatId": 6
+}
